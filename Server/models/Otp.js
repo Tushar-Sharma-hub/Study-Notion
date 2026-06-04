@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const mailSender = require('../util/mailSender');
 
-const otpSchema = new mongoose.Schema({
+const OTPSchema = new mongoose.Schema({
     email:{
         type: String,
         required: true,
@@ -16,4 +17,22 @@ const otpSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model('Otp', otpSchema);
+//Function to sedn otp to user email
+async function sendVerficationEmail(email, otp){
+    try{
+        const mailResponse = await mailSender(email, "Verification for Study Notion", `Your OTP for Study Notion is: ${otp}. It will expire in 5 minutes.`);
+        console.log('OTP email sent successfully:', mailResponse);
+    }catch (error) {
+        console.error('Error sending OTP email:', error);
+        throw error;
+    }
+}
+
+// Pre-save hook to send OTP email before saving the document (document is the otp document which is being saved in database)
+OTPSchema.pre('save', async function(next){
+    await sendVerficationEmail(this.email, this.otp);
+    next();
+});
+
+
+module.exports = mongoose.model('Otp', OTPSchema);
