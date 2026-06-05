@@ -36,7 +36,6 @@ const userSchema = new mongoose.Schema({
     }],
     image:{
         type: String,
-        required: false,
     },
     courseProgress:[{
         type: mongoose.Schema.Types.ObjectId,

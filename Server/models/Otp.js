@@ -1,3 +1,8 @@
+//OTP model to store the OTPs generated for email verification. 
+//Each OTP document will have an email, the OTP itself, and a timestamp.
+//The OTP will expire after a certain period (e.g., 5 minutes) using MongoDB's TTL index feature. 
+//When a new OTP document is created, an email will be sent to the user with the OTP for verification.
+//Using pre middleware to send the email before saving the OTP document in the database.
 const mongoose = require('mongoose');
 const mailSender = require('../util/mailSender');
 
@@ -30,7 +35,7 @@ async function sendVerficationEmail(email, otp){
 
 // Pre-save hook to send OTP email before saving the document (document is the otp document which is being saved in database)
 OTPSchema.pre('save', async function(next){
-    await sendVerficationEmail(this.email, this.otp);
+    await sendVerficationEmail(this.email, this.otp); //this refers to the OTP document which is being saved in database
     next();
 });
 

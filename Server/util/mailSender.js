@@ -22,3 +22,5 @@ const mailSender = async (email, title, body) => {
         throw error;
     }
 }
+
+module.exports = mailSender;
